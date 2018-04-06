@@ -5,22 +5,21 @@
 
 #include "graph.h"
 
-/**< Le code initial est celui donné par Monsieur Fercoq. Les fonctions ajoutées ou modifiées sont commentées par nos soins
-Pour la partie Allegro: il est possible que les fonctions utilisées soient en C (et pas C++)
-                        sources annexes: projet réalisé au second semestre d'ING1 par Sébastien BRUNELLE, Zachary FLIMON et Petar MILETIC
- */
+/**<    Le code initial est celui donné par Monsieur Fercoq. Les fonctions ajoutées ou modifiées sont commentées par nos soins
+        Pour la partie Allegro: il est possible que les fonctions utilisées soient en C (et pas C++)
+        Les sources annexes sont données dans le PPT joint au rendu du code
+*/
 
 
 using namespace std;
 
-/** \brief
- *
- * \param
- * \param
- * \return
- *
- */
 
+    /** \brief
+     *
+     * \param choix=0 int
+     * \return int
+     *
+     */
     int menu(int choix=0)   /**< Menu initial (choix entre créer un graphe et travailler avec un graphe déjà construit) */
 {
     BITMAP* paint_menu;
@@ -31,29 +30,32 @@ using namespace std;
             blit(paint_menu,screen,0,0,0,0,SCREEN_W,SCREEN_H);
             while(!selectionne)
             {
-                    if(mouse_b&1 && 84<mouse_y && mouse_y<206 && 38<mouse_x && mouse_x<797)     //le choix est déterminé en fonction de l'endroit où clique l'utilisateur
+                    if(mouse_b&2 && 75<mouse_y && mouse_y<190 && 60<mouse_x && mouse_x<810)     //le choix est déterminé en fonction de l'endroit où clique l'utilisateur
                     {
                         choix=1;
                         selectionne=true;
                     }
-                    else if(mouse_b&1 && 300<mouse_y && mouse_y<416 && 38<mouse_x && mouse_x<797)
+                    if(mouse_b&2 && 255<mouse_y && mouse_y<355 && 115<mouse_x && mouse_x<810)
                     {
                         choix=2;
+                        selectionne=true;
+                    }
+                    if(mouse_b&2 && 430<mouse_y && mouse_y<530 && 115<mouse_x && mouse_x<810)
+                    {
+                        choix=3;
                         selectionne=true;
                     }
             }
         return choix;
 }
 
+
 /** \brief
  *
- * \param
- * \param
- * \return
+ * \param choix=0 int
+ * \return int
  *
  */
-
-
 int menu_graphe(int choix=0)    /**< Menu du choix du graphe sur lequel on travaille */
 {
     BITMAP* paint_menu;
@@ -64,7 +66,7 @@ int menu_graphe(int choix=0)    /**< Menu du choix du graphe sur lequel on trava
                 blit(paint_menu,screen,0,0,0,0,SCREEN_W,SCREEN_H);
                 if(mouse_b&1 && mouse_x<50 && mouse_y<50)
                     choix=menu(0);
-                if(mouse_b&1 && 38<mouse_y && mouse_y<158 && 54<mouse_x && mouse_x<790)
+                if(mouse_b&1 && 38<mouse_y && mouse_y<200 && 54<mouse_x && mouse_x<790)
                 {
                     choix=1;
                     selectionne=true;
@@ -129,6 +131,12 @@ void sauvegarde_graphe(Graph g)
     }
 }
 
+/** \brief
+ *
+ * \param nomfichier string
+ * \return bool
+ *
+ */
 bool connexite(string nomfichier)
 {
     ifstream fichier(nomfichier, ios::in);
@@ -136,8 +144,10 @@ bool connexite(string nomfichier)
     fichier >> ordre;
     int som=0;
     int verif=0;
+    int comp=0;
     vector<bool> connexe;
     stack<int> pile;
+
     pile.push(som);
 
     for(int i=0; i<ordre; i++)
@@ -154,6 +164,7 @@ bool connexite(string nomfichier)
     while(!pile.empty())
    {
         som=pile.top();
+
         pile.pop();
         connexe[som]=true;
         for(int i=0; i<ordre; i++)
@@ -171,41 +182,83 @@ bool connexite(string nomfichier)
             verif++;
    }
    if(verif!=0)
-    {
-        cout << "Graphe non fortement connexe";
         return false;
-    }
     else
-    {
-        cout << "Graphe fortement connexe";
         return true;
-    }
-
 }
 
-void clique_bouton(int numero_graphe, string nomfichier)
+/** \brief
+ *
+ * \param g Graph
+ * \param numero_graphe int
+ * \param nomfichier string
+ * \param nouveau_fichier string
+ * \return void
+ *
+ */
+void clique_bouton(Graph g, int numero_graphe, string nomfichier, string nouveau_fichier, bool charge)
 {
     if(mouse_b&1 && mouse_x>86 && mouse_x<165 && mouse_y<50)
-        cout << "A";
-        //appel de la fonction permettant de sauver le graphe
+    {
+        if(charge==false)
+            cout << "Vous n'avez pas selectionne le bon menu. Vous ne pouvez pas sauvez le graphe ici" <<endl;
+        if(charge==true)
+            cout << "A"; //on sauve le graphe
+    }
+
     if(mouse_b&1 && mouse_x>165 && mouse_x<255 && mouse_y<50)
-        cout << "B";
-        //appel de la fonction permettant de charger un graphe
+    {
+        if(charge==false)
+            cout << "Vous n'avez pas selectionne le bon menu. Vous ne pouvez pas charger de graphe ici" <<endl;
+        if(charge==true)
+            cout << "B";    //on charge un graphe
+    }
+
     if(mouse_b&1 && mouse_x>255 && mouse_x<338 && mouse_y<50)
-        cout << "C";
-        //appel de la fonction permettant d'ajouter un sommet
+    {
+        if(charge==false)
+            cout << "Vous n'avez pas selectionne le bon menu. Vous ne pouvez pas modifier le graphe ici"<<endl;
+        if(charge==true)
+            cout << "C"; //on ajoute un sommet
+    }
+
     if(mouse_b&1 && mouse_x>337 && mouse_x<459 && mouse_y<50)
-        cout << "D";
-        //appel de la fonction permettant de supprimer un sommet
+    {
+        if(charge==false)
+            cout << "Vous n'avez pas selectionne le bon menu. Vous ne pouvez pas modifier le graphe ici" <<endl;
+        if(charge==true)
+            cout <<"D"; // on supprime un sommet
+    }
+
     if(mouse_b&1 && mouse_x>459 && mouse_x<576 && mouse_y<50)
-        connexite(nomfichier);
-        //appel de la fonction permettant de verifier si un graphe est fortement connexe ou non
+    {
+        if(charge==false)
+        {
+            bool fort_connexe;
+        fort_connexe=connexite(nomfichier); /**< appel de la fonction permettant de verifier si un graphe est fortement connexe ou non */
+        if(fort_connexe)
+            cout << "Le graphe est fortement connexe" <<endl;
+        else
+            cout << "Le graphe n'est pas fortement connexe" << endl;
+        }
+        if(charge==true)
+            cout << "Vous n'avez pas selectionne le bon menu. Vous ne pouvez pas etudier le graphe ici." <<endl;
+    }
+    if(mouse_b&1 && mouse_x>576 && mouse_x<711 && mouse_y<50)
+    {
+        if(charge==false)
+            cout << "k_connexite" <<endl;
+        if(charge==true)
+            cout << "Vous n'avez pas selectionne le bon menu. Vous ne pouvez pas etudier le graphe ici." <<endl;
+    }
+
 }
 
 int main()
 {
     int choix_graphe=0;
     int choix=0;
+
     /// A appeler en 1er avant d'instancier des objets graphiques etc...
     grman::init();
 
@@ -236,14 +289,14 @@ int main()
 
             if(choix_graphe==1)
             {
-                while(!(mouse_b&1&&mouse_x<50&&mouse_y<50))
+                while(!(mouse_b&1 && mouse_x<85 && mouse_y<50))
                 {
                     /// Il faut appeler les méthodes d'update des objets qui comportent des widgets
                     g.update();
 
                     /// Mise à jour générale (clavier/souris/buffer etc...)
                     grman::mettre_a_jour();
-                    clique_bouton(1, "matrice1.txt");
+                    clique_bouton(g, 1, "matrice1.txt", "matrice_adj1.txt", false);
                 }
                 choix_graphe=menu_graphe(choix);
 
@@ -269,7 +322,25 @@ int main()
             }
         }
         if(choix==2)
+        {
+            choix_graphe=menu_graphe(choix_graphe);
+            if(choix_graphe==1)
+            {
+                while(!(mouse_b&1 && mouse_x<85 && mouse_y<50))
+                {
+                    /// Il faut appeler les méthodes d'update des objets qui comportent des widgets
+                    g.update();
+
+                    /// Mise à jour générale (clavier/souris/buffer etc...)
+                    grman::mettre_a_jour();
+                    clique_bouton(g, 1, "matrice1.txt", "matrice_adj1.txt", false);
+                    clique_bouton(g, choix_graphe, "matrice1.txt", "matrice_adj1.txt", true);
+            }
+
+        }
+        if(choix==3)
             creer_graphe(choix, g, buffer);
+    }
     }
 
     grman::fermer_allegro();
